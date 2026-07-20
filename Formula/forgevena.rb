@@ -4,17 +4,21 @@ class Forgevena < Formula
   version "1.2.3"
   license "MIT"
 
+  depends_on arch: :x86_64
+
   on_macos do
-    url "https://github.com/rohitkumarnaidu/Forgevena/releases/download/v1.2.3/forgevena-macos-x64", using: :nounzip
-    sha256 "e2dc0bd092091fa50dee0a82c641217bde56dcea47aa1cbf4298545107cd1c40"
+    on_intel do
+      url "https://github.com/rohitkumarnaidu/Forgevena/releases/download/v1.2.3/forgevena-macos-x64", using: :nounzip
+      sha256 "e2dc0bd092091fa50dee0a82c641217bde56dcea47aa1cbf4298545107cd1c40"
+    end
   end
 
   on_linux do
-    url "https://github.com/rohitkumarnaidu/Forgevena/releases/download/v1.2.3/forgevena-linux-x64", using: :nounzip
-    sha256 "b9333b5ad3e4e1f98795c62dc59c741e86d8541905f05d842e4565da5326d72b"
+    on_intel do
+      url "https://github.com/rohitkumarnaidu/Forgevena/releases/download/v1.2.3/forgevena-linux-x64", using: :nounzip
+      sha256 "b9333b5ad3e4e1f98795c62dc59c741e86d8541905f05d842e4565da5326d72b"
+    end
   end
-
-  depends_on arch: :x86_64
 
   def install
     chmod 0755, cached_download
