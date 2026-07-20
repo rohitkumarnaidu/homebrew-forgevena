@@ -40,10 +40,6 @@ jobs:
       - name: Audit and test Formula
         shell: bash
         run: |
-          brew tap-new --no-git rohitkumarnaidu/forgevena
-          tap_path="$(brew --repository rohitkumarnaidu/forgevena)"
-          mkdir -p "$tap_path/Formula"
-          cp Formula/forgevena.rb "$tap_path/Formula/forgevena.rb"
           brew audit --strict rohitkumarnaidu/forgevena/forgevena
           brew install rohitkumarnaidu/forgevena/forgevena
           brew test rohitkumarnaidu/forgevena/forgevena
