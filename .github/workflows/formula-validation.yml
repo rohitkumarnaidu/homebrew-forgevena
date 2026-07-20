@@ -1,0 +1,49 @@
+name: Formula validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-15-intel
+    steps:
+      - name: Set up Homebrew
+        id: setup-homebrew
+        uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
+
+      - name: Cache Homebrew Bundler RubyGems
+        id: cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.setup-homebrew.outputs.gems-path }}
+          key: ${{ runner.os }}-rubygems-${{ steps.setup-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ runner.os }}-rubygems-
+
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
+
+      - name: Audit and test Formula
+        shell: bash
+        run: |
+          brew tap-new --no-git rohitkumarnaidu/forgevena
+          tap_path="$(brew --repository rohitkumarnaidu/forgevena)"
+          mkdir -p "$tap_path/Formula"
+          cp Formula/forgevena.rb "$tap_path/Formula/forgevena.rb"
+          brew audit --strict rohitkumarnaidu/forgevena/forgevena
+          brew install rohitkumarnaidu/forgevena/forgevena
+          brew test rohitkumarnaidu/forgevena/forgevena
